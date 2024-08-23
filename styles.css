@@ -1,8 +1,46 @@
-/*
+/* plugin styles */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.slide-compare {
+	--sc-ratio: 50%;
+	display: grid;
+	user-select: none;
+}
 
-If your plugin does not need CSS, delete this file.
+.slide-compare > * {
+	grid-area: 1 / 1;
+}
 
-*/
+.sc-left-container {
+	width: var(--sc-ratio);
+	overflow: hidden;
+	height: 100%;
+}
+
+.sc-compared-image {
+	display: block;
+	object-fit: cover;
+	min-height: 100%;
+	object-position: 0px;
+}
+
+.sc-slider-container {
+	position: relative;
+}
+
+.sc-ratio-slider {
+	position: absolute;
+	left: var(--sc-ratio);
+	height: 100%;
+	width: 1px;
+	background: #e2e2e2;
+	box-shadow: 0px 0px 5px black;
+}
+
+/* overriding styles */
+
+.markdown-source-view.mod-cm6
+	.cm-embed-block:not(.cm-table-widget):has(.slide-compare):hover {
+	box-shadow: unset;
+	border-radius: unset;
+	cursor: unset;
+}
