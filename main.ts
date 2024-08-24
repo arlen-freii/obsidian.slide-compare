@@ -1,4 +1,4 @@
-import { Plugin, TFile } from "obsidian";
+import { Plugin, TFile, setTooltip } from "obsidian";
 import { Err, Ok, Result } from "ts-results";
 
 const BLOCK_DATA_PATTERN =
@@ -20,18 +20,17 @@ export default class SlideCompare extends Plugin {
 		this.registerMarkdownCodeBlockProcessor(
 			LANGUAGE_ALIAS,
 			(source, el) => {
-				this.renderComparisonBlock(source, el);
+				this.renderBlock(source, el);
 			},
 		);
 	}
 
-	renderComparisonBlock(source: string, el: HTMLElement) {
+	renderBlock(source: string, el: HTMLElement) {
 		const blockData = this.parseBlockData(source);
 
-		const blockHTML = blockData.ok
-			? this.createComparisonBlock(blockData.val)
-			: this.createErrorBlock(blockData.val);
-		el.replaceWith(blockHTML);
+		blockData.ok
+			? this.renderComparisonBlock(el, blockData.val)
+			: this.renderErrorBlock(el, blockData.val);
 	}
 
 	parseBlockData(
@@ -74,7 +73,7 @@ export default class SlideCompare extends Plugin {
 		});
 	}
 
-	createComparisonBlock(blockData: { images: Array<TFile>; figure: string }) {
+	renderComparisonBlock(el: HTMLElement, blockData: { images: Array<TFile>; figure: string }) {
 		const vault = blockData.images[0].vault;
 
 		const rootBlock = createDiv({ cls: "slide-compare" });
@@ -102,6 +101,7 @@ export default class SlideCompare extends Plugin {
 		sliderContainer.createDiv({ cls: "sc-ratio-slider" });
 
 		const listener = (e: MouseEvent) => {
+			if (e.buttons !== 1) return;
 			const boundingBox = rootBlock.getBoundingClientRect();
 			const sliderRatio =
 				(e.clientX - boundingBox.left) /
@@ -110,23 +110,34 @@ export default class SlideCompare extends Plugin {
 		};
 
 		rootBlock.addEventListener("mousemove", (e) => {
-			if (e.buttons === 1) listener(e);
+			listener(e);
 		});
 		rootBlock.addEventListener("mousedown", (e) => {
 			listener(e);
 		});
 
-		return rootBlock;
+		el.appendChild(rootBlock);
+
+		const returnSliderButton = createDiv({ cls: "sc-return-slider-button edit-block-button" });
+		returnSliderButton.innerHTML = returnSvg;
+		setTooltip(returnSliderButton, "Return slider");
+
+		returnSliderButton.addEventListener("click", () => {
+			rootBlock.style.removeProperty("--sc-ratio");
+		});
+
+		el.parentNode?.appendChild(returnSliderButton);
+		el.replaceWith(el);
 	}
 
-	createErrorBlock(message: string) {
+	renderErrorBlock(el: HTMLElement, message: string) {
 		const rootBlock = createDiv({ cls: "slide-compare" });
 		rootBlock.createEl("pre", {
 			cls: "sc-error-block",
 			text: ERROR_MESSAGE_WRAPPER.format(message),
 		});
 
-		return rootBlock;
+		el.appendChild(rootBlock);
 	}
 }
 
@@ -134,3 +145,5 @@ const ERROR_MESSAGE_WRAPPER =
 	"Slide Compare has encountered an error:\n" +
 	"- {0}\n\n" +
 	"Please review this block and try again.";
+
+const returnSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide lucide-undo-2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>';

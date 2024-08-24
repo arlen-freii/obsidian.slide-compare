@@ -44,3 +44,7 @@
 	border-radius: unset;
 	cursor: unset;
 }
+
+.sc-return-slider-button {
+	top: calc(var(--size-2-2) * 4 + var(--icon-size)) !important;
+}
