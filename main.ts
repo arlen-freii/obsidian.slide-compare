@@ -73,7 +73,10 @@ export default class SlideCompare extends Plugin {
 		});
 	}
 
-	renderComparisonBlock(el: HTMLElement, blockData: { images: Array<TFile>; figure: string }) {
+	renderComparisonBlock(
+		el: HTMLElement,
+		blockData: { images: Array<TFile>; figure: string },
+	) {
 		const vault = blockData.images[0].vault;
 
 		const rootBlock = createDiv({ cls: "slide-compare" });
@@ -118,7 +121,9 @@ export default class SlideCompare extends Plugin {
 
 		el.appendChild(rootBlock);
 
-		const returnSliderButton = createDiv({ cls: "sc-return-slider-button edit-block-button" });
+		const returnSliderButton = createDiv({
+			cls: "sc-return-slider-button edit-block-button",
+		});
 		returnSliderButton.innerHTML = returnSvg;
 		setTooltip(returnSliderButton, "Return slider");
 
@@ -146,4 +151,5 @@ const ERROR_MESSAGE_WRAPPER =
 	"- {0}\n\n" +
 	"Please review this block and try again.";
 
-const returnSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide lucide-undo-2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>';
+const returnSvg =
+	'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide lucide-undo-2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>';
